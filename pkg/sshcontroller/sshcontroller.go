@@ -91,21 +91,6 @@ func (sshc *SSHController) Close() error {
 	return sshc.connection.Close()
 }
 
-func newClientConfig(user string, file string) (*ssh.ClientConfig, error) {
-	publicKeyFile, err := publicKeyFile(file)
-	if err != nil {
-		return nil, err
-	}
-
-	return &ssh.ClientConfig{
-		User:            user,
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		Auth: []ssh.AuthMethod{
-			publicKeyFile,
-		},
-	}, nil
-}
-
 //Run - ...........
 func (sshc *SSHController) Run(cmd string) error {
 	return sshc.session.Run(cmd)
@@ -139,9 +124,24 @@ func publicKeyFile(file string) (ssh.AuthMethod, error) {
 	}
 
 	key, err := ssh.ParsePrivateKey(buffer)
-	//key, err := ssh.ParsePrivateKeyWithPassphrase(buffer, []byte("big_mouth"))
+	//key, err := ssh.ParsePrivateKeyWithPassphrase(buffer, []byte("#####"))
 	if err != nil {
 		return nil, err
 	}
 	return ssh.PublicKeys(key), nil
+}
+
+func newClientConfig(user string, file string) (*ssh.ClientConfig, error) {
+	publicKeyFile, err := publicKeyFile(file)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ssh.ClientConfig{
+		User:            user,
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		Auth: []ssh.AuthMethod{
+			publicKeyFile,
+		},
+	}, nil
 }
