@@ -18,7 +18,7 @@ func GetHostStats(host string, roundtrips int) (*HostStats, error) {
 	}
 
 	hostStats := &HostStats{}
-	pinger.SetPrivileged(true)
+	pinger.SetPrivileged(false)
 	pinger.Count = roundtrips
 	err = pinger.Run()
 
